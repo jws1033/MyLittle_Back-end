@@ -5,8 +5,9 @@ pragma experimental ABIEncoderV2;
 
 contract myLittleDoctor {
     struct survey {
+        uint16 surveyOrdNum;
         string createAt;
-        uint16[] surveyNum;
+        string[] surveyNum;
         bool[] surveyResult;
     }
 
@@ -14,33 +15,22 @@ contract myLittleDoctor {
         survey[] surveys;
     }
 
-    address owner;
-    uint16[] public patients;
-    mapping(uint16 => research) private researchs;
+    // address owner;
+    mapping(string => research) private researchs;
 
-    constructor() public {
-        owner = msg.sender;
-    }
+    // constructor () public {
+    //     // owner = msg.sender;
+    // }
 
     function saveSurvey(
-        uint16 cellNum,
+        uint16 surveyOrdNum,
+        string memory cellNum,
         string memory createAt,
-        uint16[] memory surveyNum,
+        string[] memory surveyNum,
         bool[] memory surveyResult
     ) public {
-        bool hasUser = false;
-
-        for (uint16 i = 0; i < patients.length; i++) {
-            if (patients[i] == cellNum) {
-                hasUser = true;
-                break;
-            }
-        }
-        if (!hasUser) {
-            patients.push(cellNum);
-        }
-
         survey memory newServey = survey({
+            surveyOrdNum: surveyOrdNum,
             createAt: createAt,
             surveyNum: surveyNum,
             surveyResult: surveyResult
@@ -48,8 +38,11 @@ contract myLittleDoctor {
         researchs[cellNum].surveys.push(newServey);
     }
 
-    function querySurvey(uint16 patient) public view returns (survey[] memory) {
-        return researchs[patient].surveys;
-        // return (researchs[patient].cellNum, researchs[patient].creatAt, researchs[patient].surveyNum, researchs[patient].surveyResult);
+    function querySurvey(string memory cellNum)
+        public
+        view
+        returns (survey[] memory)
+    {
+        return researchs[cellNum].surveys;
     }
 }
